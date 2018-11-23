@@ -10,7 +10,6 @@ Nodemon ^1.18.4
 
 1. To install dependencies run.
 > `npm install`
-2. Run the app    
-Normal mode: > `node app.js`   
-Nodemon      > `nodemon app.js`
+2. Run the app
+> `node app.js`
 
