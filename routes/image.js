@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const router = express.Router();
+
 require('./../configs/config');
+var File = require('./../models/file');
 
 const multer = require('multer');
 const Grid = require('gridfs-stream');
@@ -88,7 +90,7 @@ router.delete('/image/:idimage', (req, res) => {
 router.get('/list_images', (req, res) => {
     gfs.files.find().toArray(function (err, files) {
         if (err) {
-            res.status(200).json({
+            res.status(400).json({
                 ok: false,
                 error: "¡Error! Could not get images."
             });
@@ -98,7 +100,7 @@ router.get('/list_images', (req, res) => {
             data: files,
             msg: "Images got correctly."
         });
-    })
+    });
 });
 
 
@@ -106,11 +108,34 @@ router.get('/list_images', (req, res) => {
 router.get('/image/:idimage', (req, res) => {
 
     let idimage = req.params.idimage;
-    
     const readStream = gfs.createReadStream({
         _id: idimage
     });
     readStream.pipe(res);
+
 });
 
+
+// Add an image to album
+router.put('/image/:idalbum/:idimage', (req, res) => {
+
+    let {
+        idalbum,
+        idimage
+    } = req.params;
+    let objectId = new mongoose.mongo.ObjectId(idalbum);
+
+    File.update({
+        _id: idimage
+    }, {
+        $set: {
+            albums_id: objectId
+        }
+    }, {
+        new: false
+    }, function (err, tank) {
+        if (err) return handleError(err);
+        res.send(tank);
+    });
+});
 module.exports = router;
