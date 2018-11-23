@@ -9,7 +9,9 @@ Nodemon ^1.18.4
 ### Execute in the project root
 
 1. To install dependencies run.
-   > *npm install*
-2. To run the app run   
-   > *node app.js* or *nodemon app.js*  if you installed nodemon
+> `npm install`
+2. To run the app without nodemon   
+> `node app.js`
+   To run the app with nodemon   
+> `nodemon app.js`
 
