@@ -1,6 +1,6 @@
 ### Prerequisites 
 
-NodeJS ^10.3.0+
+NodeJS ^10.3.0
 
 ### Opcionals 
 
