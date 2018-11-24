@@ -1,13 +1,15 @@
-#Prerequisites 
+### Prerequisites 
 
 NodeJS ^10.3.0+
 
-#Opcionals 
+### Opcionals 
 
 Nodemon ^1.18.4
 
-#Execute in the project root
+### Execute in the project root
 
-npm install 
-
+1. To install dependencies run.
+> `npm install`
+2. Run the app
+> `node app.js`
 
