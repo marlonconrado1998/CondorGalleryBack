@@ -1,141 +1,73 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 const router = express.Router();
 
-require('./../configs/config');
-var File = require('./../models/file');
+// Helpers
+var Image = require('../helpers/image');
+var image = new Image();
 
-const multer = require('multer');
-const Grid = require('gridfs-stream');
-const GridFsStorage = require('multer-gridfs-storage');
-const crypto = require('crypto');
-const conn = mongoose.createConnection(process.env.MONGO_URI);
-var gfs;
-
-conn.once('open', () => {
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('images');
-});
-
-
-var storage = new GridFsStorage({
-    url: process.env.MONGO_URI,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            crypto.randomBytes(16, (err, buf) => {
-                if (err) return reject(err);
-                const filename = buf.toString('hex') + path.extname(file.originalname);
-                const fileInfo = {
-                    filename: filename,
-                    bucketName: 'images'
-                };
-                resolve(fileInfo);
-            });
-        });
-    }
-});
-
-var upload = multer({
-    storage: storage
-}).single('file');
-
-
-// Save a new image
 router.post('/image', (req, res) => {
-
-    let file = req.file;
-
-    upload(req, res, function (err) {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                error: "¡Error! The image was not uploaded."
-            });
-        };
-        return res.status(200).json({
-            ok: true,
-            data: {},
-            msg: "Image uploaded correctly."
-        });
+    image.save(req, res).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
     });
 });
 
-
-// Delete an image
 router.delete('/image/:idimage', (req, res) => {
 
     let idimage = req.params.idimage;
 
-    gfs.remove({
-        _id: idimage,
-        root: 'images'
-    }, function (err) {
-        if (err) {
-            res.status(400).json({
-                ok: false,
-                error: "¡Error! The image was not deleted."
-            })
-        }
-        res.status(200).json({
-            ok: true,
-            data: {},
-            msg: "Image deleted correctly."
-        })
+    image.removeById(idimage).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
     });
 });
 
 
-// Get metadata of images list  
 router.get('/list_images', (req, res) => {
-    gfs.files.find().toArray(function (err, files) {
-        if (err) {
-            res.status(400).json({
-                ok: false,
-                error: "¡Error! Could not get images."
-            });
-        }
-        res.status(200).json({
-            ok: true,
-            data: files,
-            msg: "Images got correctly."
-        });
+    image.getAll().then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
     });
 });
 
 
-// Get an image by _id
 router.get('/image/:idimage', (req, res) => {
-
     let idimage = req.params.idimage;
-    const readStream = gfs.createReadStream({
-        _id: idimage
-    });
+    let readStream = image.getById(idimage);
     readStream.pipe(res);
-
 });
 
 
-// Add an image to album
-router.put('/image/:idalbum/:idimage', (req, res) => {
+router.put('/add_to_album/:idalbum/:idimage', (req, res) => {
 
     let {
         idalbum,
         idimage
     } = req.params;
-    let objectId = new mongoose.mongo.ObjectId(idalbum);
+    let albumObjectId = new mongoose.mongo.ObjectId(idalbum);
+    let imageObjectId = new mongoose.mongo.ObjectId(idimage);
 
-    File.update({
-        _id: idimage
-    }, {
-        $set: {
-            albums_id: objectId
-        }
-    }, {
-        new: false
-    }, function (err, tank) {
-        if (err) return handleError(err);
-        res.send(tank);
-    });
+    image.addToAlbum(imageObjectId, albumObjectId).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
+    })
 });
+
+router.put('/remove_from_album/:idimage', (req, res) => {
+
+    let idimage = req.params.idimage;
+    let imageObjectId = new mongoose.mongo.ObjectId(idimage);
+
+    image.removeFromAlbum(imageObjectId).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
+    })
+});
+
 module.exports = router;

@@ -5,6 +5,7 @@ const app = express();
 
 // Configs  
 require('./configs/config');
+app.set('PORT', 3000);
 
 // Middlewares 
 app.use(bodyParser.urlencoded({
@@ -12,7 +13,13 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(require('./routes/routes'));
-
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', "true");
+  next();
+});
 
 // Conect to database
 mongoose.connect(process.env.MONGO_URI, {
@@ -25,6 +32,6 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 
 // Listen on port 8100
-app.listen(8100, () => {
-  console.log('¡Listening on port 8100!');
+app.listen(app.get('PORT'), () => {
+  console.log(`Listening on port ${app.get('PORT')}`);
 });

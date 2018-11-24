@@ -2,28 +2,26 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 
-var Album = require('../models/album');
-var File = require('./../models/file');
+// Helpers 
+var Image = require('./../helpers/image');
+var Album = require('./../helpers/album');
+
+// Classes
+var image = new Image();
+var album = new Album();
 
 // This service create a new album
 router.post('/album', (req, res) => {
 
-    let {name} = req.body;
-
-    let album = new Album({
-        name,
+    let data = {
+        name: req.body.name,
         date: new Date(),
+    };
+    album.save(data).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
     })
-
-    album.save((error, userDB) => {
-        if (error) {
-            return res.status(400).json({
-                status: 400,
-                error
-            });
-        };
-        return res.status(201).json(userDB);
-    });
 });
 
 // Get images belong an album
@@ -32,21 +30,11 @@ router.get('/albums_images/:idalbum', (req, res) => {
     let idalbum = req.params.idalbum;
     let objectId = new mongoose.mongo.ObjectId(idalbum);
 
-    File.find({
-        albums_id: objectId
-    }, (err, files) => {
-        if (err) {
-            res.status(400).json({
-                ok: false,
-                error: "¡Error! Could not get images."
-            });
-        }
-        res.status(200).json({
-            ok: true,
-            data: files,
-            msg: "Images got correctly."
-        });
-    });
+    image.getByAlbum(objectId).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
+    })
 });
 
 module.exports = router;

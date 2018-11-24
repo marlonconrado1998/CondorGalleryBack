@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var albumSchema = new Schema({
+var AlbumSchema = new Schema({
     name: {
         type: String,
         required: [true, "name is required"],
@@ -11,6 +11,6 @@ var albumSchema = new Schema({
         type: Date,
         required: [true, 'date is required']
     }
-});
+}, {strict: false, collection: 'albums'});
 
-module.exports = mongoose.model('Album', albumSchema);
+module.exports = mongoose.model('AlbumSchema', AlbumSchema);
