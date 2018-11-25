@@ -22,7 +22,7 @@ module.exports = class Image {
                     return new Promise((resolve, reject) => {
                         crypto.randomBytes(16, (err, buf) => {
                             if (err) return reject(err);
-                            const filename = buf.toString('hex') + path.extname(file.originalname);
+                            const filename = file.originalname;
                             const fileInfo = {
                                 filename: filename,
                                 bucketName: 'images'
@@ -38,7 +38,8 @@ module.exports = class Image {
     // Save an image
     save(req, res) {
         return new Promise((resolve, reject) => {
-            this.upload(req, res, function (err) {
+            this.upload(req, res, function (err, file) {
+                console.log(file);
                 if (err) {
                     return reject({
                         ok: false,
@@ -47,7 +48,7 @@ module.exports = class Image {
                 };
                 return resolve({
                     ok: true,
-                    data: {},
+                    data: req.file,
                     msg: "Image uploaded successfully."
                 });
             });
@@ -111,11 +112,7 @@ module.exports = class Image {
                         msg: "¡Error! Could not get images."
                     });
                 }
-                return resolve({
-                    ok: true,
-                    data: files,
-                    msg: "Images found successfully."
-                });
+                return resolve(files);
             });
         });
     }

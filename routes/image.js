@@ -42,12 +42,12 @@ router.get('/image/:idimage', (req, res) => {
 });
 
 
-router.put('/add_to_album/:idalbum/:idimage', (req, res) => {
+router.post('/add_to_album', (req, res) => {
 
     let {
         idalbum,
         idimage
-    } = req.params;
+    } = req.body;
     let albumObjectId = new mongoose.mongo.ObjectId(idalbum);
     let imageObjectId = new mongoose.mongo.ObjectId(idimage);
 

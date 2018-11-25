@@ -37,4 +37,12 @@ router.get('/albums_images/:idalbum', (req, res) => {
     })
 });
 
+router.get('/albums', (req, res) => {
+    album.getAll().then((albums) => {
+        res.status(200).json(albums);
+    }).catch((error) => {
+        res.status(400).json(error);
+    });
+});
+
 module.exports = router;

@@ -1,7 +1,7 @@
 const AlbumSchema = require('../models/album');
 
 module.exports = class Album {
-    
+
     constructor() {}
 
 
@@ -20,6 +20,20 @@ module.exports = class Album {
                     ok: true,
                     msg: `Album ${albumDb.name} created successfully.`
                 });
+            });
+        });
+    }
+
+    getAll() {
+        return new Promise((resolve, reject) => {
+            AlbumSchema.find((error, albumsDb) => {
+                if (error) {
+                    return reject({
+                        ok: false,
+                        msg: "¡Error! The albums were not found."
+                    });
+                };
+                return resolve(albumsDb);
             });
         });
     }
