@@ -70,4 +70,31 @@ router.put('/remove_from_album/:idimage', (req, res) => {
     })
 });
 
+router.get('/filter_image/:name/:dateFrom/:dateTo', (req, res) => {
+
+    let {
+        name,
+        dateFrom,
+        dateTo
+    } = req.params;
+
+    let df = [];
+    let dt = [];
+    let ddf = "null";
+    let ddt = "null";
+
+    if (dateFrom !== "null", dateTo !== "null") {
+        df = dateFrom.split('-');
+        dt = dateTo.split('-');
+        ddf = new Date(df[0], (df[1] - 1), df[2]);
+        ddt = new Date(dt[0], (dt[1] - 1), dt[2]);
+    }
+
+    image.filterImage(name, ddf, ddt).then((resp) => {
+        res.status(200).json(resp);
+    }).catch((error) => {
+        res.status(400).json(error);
+    });
+});
+
 module.exports = router;

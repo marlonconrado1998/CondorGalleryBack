@@ -171,4 +171,28 @@ module.exports = class Image {
             });
         });
     }
+
+    // Search images by (name, date)
+    filterImage(name, from, to) {
+
+        let query = {};
+        if (name && name != "null") query.filename = name;
+        if (from != "null" && to != "null") {
+            query.uploadDate = {
+                $gte: from,
+                $lte: to
+            };
+        }
+        return new Promise((resolve, reject) => {
+            FileSchema.find(query, (error, imagesDb) => {
+                if (error) {
+                    reject({
+                        ok: false,
+                        msg: "¡Error! Could not get images."
+                    });
+                }
+                resolve(imagesDb);
+            });
+        });
+    }
 }
