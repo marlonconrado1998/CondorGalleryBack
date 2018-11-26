@@ -5,7 +5,7 @@ const app = express();
 
 // Configs  
 require('./configs/config');
-app.set('PORT', 3000);
+// app.set('PORT', 3000);
 
 // Middlewares 
 app.use(bodyParser.urlencoded({
@@ -32,6 +32,6 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 
 // Listen on port 8100
-app.listen(app.get('PORT'), () => {
-  console.log(`Listening on port ${app.get('PORT')}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Listening on port ${process.env.PORT}`);
 });
