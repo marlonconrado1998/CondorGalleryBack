@@ -174,15 +174,13 @@ module.exports = class Image {
 
     // Search images by (name, date)
     filterImage(name, from, to) {
-
+        
         let query = {};
         if (name && name != "null") query.filename = name;
-        if (from != "null" && to != "null") {
-            query.uploadDate = {
-                $gte: from,
-                $lte: to
-            };
-        }
+        if (from != "null" || to != "null") query.uploadDate = {};
+        if (from != "null") query.uploadDate.$gte =  from;
+        if (to != "null") query.uploadDate.$lte =  to;
+
         return new Promise((resolve, reject) => {
             FileSchema.find(query, (error, imagesDb) => {
                 if (error) {

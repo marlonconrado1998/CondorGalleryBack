@@ -83,10 +83,12 @@ router.get('/filter_image/:name/:dateFrom/:dateTo', (req, res) => {
     let ddf = "null";
     let ddt = "null";
 
-    if (dateFrom !== "null", dateTo !== "null") {
+    if (dateFrom !== "null") {
         df = dateFrom.split('-');
-        dt = dateTo.split('-');
         ddf = new Date(df[0], (df[1] - 1), df[2]);
+    }
+    if (dateTo !== "null") {
+        dt = dateTo.split('-');
         ddt = new Date(dt[0], (dt[1] - 1), dt[2]);
     }
 
