@@ -1,7 +1,7 @@
 ### Prerequisites 
 
-NodeJS ^10.3.0
-Mongo Shell ^4.0
+*NodeJS ^10.3.0
+*Mongo Shell ^4.0
 
 ### Execute in the project root
 
